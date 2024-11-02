@@ -3,7 +3,6 @@ title: "CEVE 101: Project 03"
 author: "Bailee Byrd (bb111)"
 date: "2024-10-23"
 output: html_document
-kernel: julia-1.11
 code-annotations: hover
 format:
     html: default
