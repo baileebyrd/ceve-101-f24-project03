@@ -26,7 +26,7 @@ using RainwaterHarvesting         # <2>
 Next, we specify the path to the rainfall data file and read it in.
 
 ```{julia}
-filepath = "data/1.txt" # <1>   
+filepath = "data/18.txt" # <1>   
 rainfall_data = RainfallData(filepath) # <2>
 ```
 
@@ -50,12 +50,22 @@ plot(rainfall_data) # <1>
 
 ### Discussion
 
-*Insert discussion here*
+The data provided for the Aurora Region contains 50 years of rainfall analysis. There are some gaps in my data due to years that perhaps did not have sufficient rainfall. However, 50 years of data provides a broad range of rainfall in the area, which will provide ample opportunity to process rainfall in the region, and how the water will be utilized for productivity in the region.
+
+The years of major drought in Ceara, Brazil, found via research, were 1877-1878, 1993-1998, 2012-2018  and 2023. The "Great Drought" in 1877-1879 is a bit too early to document, dainly rainfall was not monitored during this time period. However, the droughts beginning in 1993 are covered by the data provided for the Aurora station. I do have a gap in my data around 1991-1192 ish, and this might lead into the beginning of the 1993 drought. This would be detrimental in analyzing the affect of the drought during this time period, having little information about water quantity in the region. However, the 50 year range, though missing a few years of data, is sufficient.
 
 ## Understanding the Theoretical Model
 
 Let's explore the model that simulates the rainwater harvesting system.
+ The model provided, the masss balance equation, analyzes data on a few parameters: volume of water in the tank, volume of water consumed as the time, maximum volume of the tank, and volume of water added. Along with consumption equations, the model has a few gaps in its principles. 
+ 
+ When looking to quanitfy the amount of daily rainfall, this data may not be completly accurate. Rainfall is likely to evaporate when being collected in the station, and gives an innacurate skew of how much rainfall is occuring in the area. While there is a first flush volume that is included in the parameters, not all contaminated water will be eliminated with the first flush. Within storms, or rainfall with a lot of sediment, the first flush will not account for all of the water that is actually able to be utilized.
 
+ Daily rainfall is only using the amount of water that is collected in the station. While the station is well constructed and provides a broad enough range to capture daily rainfall, this number may not be completly accurate. This is likely a very small error, as the stations are designed to cover enough area to capture a close-to-real projection of daily rainfall.
+
+ Within this model, it is assumed that there are other sources of water for 150 days out of the year, and each household consumes 74 liters of water. These are bold assumptions that the usage of water is standardized across the couuntry, and this is likely not true. 
+
+ There are a few ways we could relax these assumptions in order to make the model more accurate. When calculating the inflow of the tank, we can add a variable of unusable water that is not taken care of after the first flush. This would provide the equation Pt-F-U, U being unusable water. First flush should take care of the sediment in the tank, but this is not entirely guaranteed. In the consumption of water, there should be a more relaxed estimate from where water usage begins and ends. It may be beneficial to propose that the water usage begins prior to the 150 days of the year already accounted for, given room for error of about +- 25 days. Given this area of Brazil has experiences many cycles of drought, it is not dependable to assume that there are always other water sources to depend on, or enough rainfall provided in the dry seasons.
 ### Mass Balance Equation
 
 The mass balance model for the rainwater tank is given by:
@@ -106,12 +116,13 @@ How does this compare to your household's water usage?
 We can define the model parameters with sensible default values.
 You will have the opportunity to change these values later.
 
+For my modifications, let's see what occurs when the first flush is adjusted to 5.0 value and the runoff coefficient is slightly increased.
 ```{julia}
 #| output: false
 param = ModelParameters(          # <1>
-    runoff_coefficient=0.85,      # <2>
+    runoff_coefficient=0.95,      # <2>
     roof_area_m2=45.0,            # <3>
-    first_flush_mm=2.0,           # <4>
+    first_flush_mm=5.0,           # <4>
     tank_capacity_L=16000.0       # <5>
 )
 ```
