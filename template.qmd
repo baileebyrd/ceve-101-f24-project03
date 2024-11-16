@@ -9,7 +9,8 @@ format:
     html: default
     docx: default
 ---
-
+### Welcome to the Aurora Station Analysis
+Welcome to the Aurora Station Analysis by Bailee Byrd, CEVE 101 F24, taught by Professor James Doss-Gollin.
 
 We begin by loading the required packages.
 
@@ -68,13 +69,12 @@ Let's explore the model that simulates the rainwater harvesting system.
  Within this model, it is assumed that there are other sources of water for 150 days out of the year, and each household consumes 74 liters of water. These are bold assumptions that the usage of water is standardized across the couuntry, and this is likely not true. 
 
  There are a few ways we could relax these assumptions in order to make the model more accurate. When calculating the inflow of the tank, we can add a variable of unusable water that is not taken care of after the first flush. This would provide the equation Pt-F-U, U being unusable water. First flush should take care of the sediment in the tank, but this is not entirely guaranteed. In the consumption of water, there should be a more relaxed estimate from where water usage begins and ends. It may be beneficial to propose that the water usage begins prior to the 150 days of the year already accounted for, given room for error of about +- 25 days. Given this area of Brazil has experiences many cycles of drought, it is not dependable to assume that there are always other water sources to depend on, or enough rainfall provided in the dry seasons.
-### Mass Balance Equation
 
-The mass balance model for the rainwater tank is given by:
+ The consumption model is left below for viewing. Below you can also view an adjusted inflow equation, for the volume of water that might be lost due to evaporation. Even though the runoff coefficient accounts for evapoartion, I felt it was necessary to adjust due to the large risk water is under when left sitting in hot/sunny areas for long period of time.
 
-$$
-V_{t+1} = V_t + Q_t - C_t | 0 \leq V_t \leq V_\text{max}
-$$
+
+
+For the purpose of my analysis, I will keep the information for the consumption model. I am assuming that there is already knowledge of the mass balance equation and inflow. 
 
 - $V_t$: the volume of water in the tank at time $t$
 - $Q_t$ is the volume of water added to the tank at time $t$
@@ -93,6 +93,7 @@ $$
 - $A$: the area of the roof (we will use square meters)
 - $P_t$: the precipitation at time $t$ (we will use millimeters per day)
 - $F$: the first flush volume (we will use millimeters). The first flush volume is often discarded, so that each time it rains the first bit of water (which is usually dirty) is not used (see [here](https://rainwaterharvesting.tamu.edu/pre-storage-treatment/) for more details).
+Inserted within this euqation would be E, an adjustable amount that would project the amount of water lost due to evapoartion due to wet/dry season temperature and sunlight relflection.
 
 ### Consumption
 
@@ -112,19 +113,17 @@ The second assumption is that each household consumes 74.1 liters per day during
 How does this compare to your household's water usage?
 
 ## Model Implementation and Testing
+For my modifications, let's see what occurs when the first flush is adjusted to 5.0 value and the runoff coefficient is slightly increased. For the purpose of analyzing water collection in the Aurora station, it felt necessary to adjust the first flush volume, due to the fact that the first flush likely does not erase all of the sediment in the water. Additionally, the runoff coefficient needs to be adjusted slightly to adjust for excess amounts of water that might hit the tank and may evaporate, or be lost in the collection process. Having an overestimate, or overestimated amount of water that could actually be used would be detrimental to the community looking to utilize the water. With increasing these parameters, it is likely that the system may come to a sort of failure, as water during the dry seasons is quite sparse. In order to maximize the amount of water that is collected, I will increase the roof area to 55.0, 20 larger than typical. With the Aurora station being in an area that is commonly subject to drought, it is a neccessity to collect as much water as possible, and ensure the collected water is usable.
 
 ### Defining the Model Parameters
+I will adjust the runoff coefficient to 0.95, and the first flush capacity to 3.5. I will also increase the roof area to 55.0
 
-We can define the model parameters with sensible default values.
-You will have the opportunity to change these values later.
-
-For my modifications, let's see what occurs when the first flush is adjusted to 5.0 value and the runoff coefficient is slightly increased.
 ```{julia}
 #| output: false
 param = ModelParameters(          # <1>
     runoff_coefficient=0.95,      # <2>
-    roof_area_m2=5.0,            # <3>
-    first_flush_mm=5.0,           # <4>
+    roof_area_m2=55.0,            # <3>
+    first_flush_mm=3.5,           # <4>
     tank_capacity_L=16000.0       # <5>
 )
 ```
@@ -137,32 +136,38 @@ param = ModelParameters(          # <1>
 
 ### Running the Simulation for One Year
 
-Let's run the model for the year 1981.
+Let's run the model for the year 1977, near the beginning of my data range.
 
 ```{julia}
-rainfall_1981 = rainfall_data.annual_data[1981]    # <1>
-results_1981 = run_timesteps(rainfall_1981, param) # <2>
-p1 = plot(results_1981)                                 # <3>
+rainfall_1977 = rainfall_data.annual_data[1977]    # <1>
+results_1977 = run_timesteps(rainfall_1977, param) # <2>
+p1 = plot(results_1977)                                 # <3>
 ```
 
-1. We select the annual rainfall data for the year 1981.
-2. We run the simulation for the year 1981.
+1. We select the annual rainfall data for the year 1977.
+2. We run the simulation for the year 1977.
 3. We plot the results, again using a `plot` function defined in [viz.jl](./RainwaterHarvesting/src/viz.jl).
 
 To compare rainfall and tank volume:
 
 ```{julia}
-p2 = plot(rainfall_1981)
+p2 = plot(rainfall_1977)
 plot(p2, p1, layout=(2, 1), size=(1000, 700), link=:x)
 ```
 
 Observe how the tank's water level responds to rainfall events.
 Note any periods when the tank runs dry or overflows.
 
+In 1977, during the second half of the year, there are a great amount of system failures.
+
+### Justifying My Modifications
+
+I chose to modify the runoff coefficient and first flush volume to account for the fact rhat excess water may be collected, but not all of the waste water is eliminated with the first flush. However, adjusting both the runoff coefficient and the first flush volume may not have had the best impact on the Aurora station. Let's determine the impact on the system during the 50 years that I have been provided data for.
 ### Reliability Analysis
 
-We can run simulations for all years, one at a time, and then check how many times the tank runs dry.
-You can run simulations for all years at once with the following code:
+For the Aurora station, though I started with the year 1977, I will run the simulation for each year. With my proposed model, it is my hope that the system will be more productive and beneficial for the Brazilian community. 
+
+Now, I will run the modifications for the 50 years of data that my system provides.
 
 ```{julia}
 all_years = sort(collect(keys(rainfall_data.annual_data)))          # <1>
@@ -171,7 +176,18 @@ any_failures = [!isempty(result.failure_dates) for result in all_results]  # <3>
 println("Number of years with failures: ", sum(any_failures), " out of ", length(all_years))  # <4>
 ```
 
-1. We get all the years in order.
-2. We run the simulation for each year.
-3. We check if any failures occurred.
-4. We print the number of years with failures and the total number of years.
+In this system, using my modified parameters, there are only 2 years out of 50 where there are system failures. This means that overall, my new model parameters provide a system reliability of 96%. 
+
+Choosing to increase the runoff coefficient and the first flush capacity initially caused me to think that I would have greater system failures than actually occured. However, I knew if I was going to increase the amount of water flushed out of the tank, or lost in the tank, I had to increase the possibility of water flowing into the tank, which would increase with a larger roof area. When more water is flushed out of the tank, with the same ability to collect water, the tank is more likely to run dry. 
+
+### Identifying a Gap in the Methods
+
+In the current model, one of the greatest gaps that appeared to me was the assumption of water consumed by each household, and the value of the first flush capacity. 
+
+To adjust the assumption of household consumption, we could do a more hands-on analysis of water consumption in the region, instead of a broad estimate. Though there are dry seasons for the entire region, some households may do a better job of conserving water, or have better access to alternative water sources. Instead of assuming all households use 74.1 Liters during the dry season, we can relax this number by taking note of how much water is used during the wet seasons, and decrease this by a slight percentage. This also assumes that there is water available elsewhere during the wet seasons, but the station is still present during the dry seasons as well. There could be note taken of how much water is taken out of the station during the wet season, and assume that is may raise by a certain percentage during the dry season, to create a more accurate average water consumption by each household.
+
+With the first flush capacity at its current value, it is making an assumptiin that all of the sediment/contaminants within the water will be eliminated with that standatd flush of water. This is almost guaranteed to lead to some inaccuracies, there is neveer the same amount of sediment within each first flush. In order to combat this huge room for error, though it may take some more complex data analysis, is monitor the water collected during the wet seasons, and notice which storms/rainfall bring in more sediment. This will turn the first flush capacity to a variable quanitity. When greater amounts of water come in, there is more water, which will dilute the amount of sediment and contaminants that come in off of the roof, than when a small amount of water enters the tank. However, the first flush capacity can't be too large to the point where it eliminates all of the water entering the tank. The first flush should never eliminate more than around 25% of the water entering the tank, but could be as low as 5% if there is a large amount of rainfall.
+
+### Conclusion
+
+Overall, analyzing the Aurora station was a rewarding experience and a great dive into environmental analysis through coding.
