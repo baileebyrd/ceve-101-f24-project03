@@ -44,7 +44,7 @@ If we dig under the hood a bit, we can see that there are two main pieces of inf
 
 ### Plotting the Data
 
-We can plot the data for one or all of the years to verify that it looks correct.
+We can plot the data for one or all of the years to verify that it looks correct. My station provides 50 years of data, so I will plot the range of data given.
 
 ```{julia}
 plot(rainfall_data) # <1>
@@ -58,7 +58,7 @@ plot(rainfall_data) # <1>
 
 The data provided for the Aurora Region contains 50 years of rainfall analysis. There are some gaps in my data due to years that perhaps did not have sufficient rainfall. However, 50 years of data provides a broad range of rainfall in the area, which will provide ample opportunity to process rainfall in the region, and how the water will be utilized for productivity in the region.
 
-The years of major drought in Ceara, Brazil, found via research, were 1877-1878, 1993-1998, 2012-2018  and 2023. The "Great Drought" in 1877-1879 is a bit too early to document, dainly rainfall was not monitored during this time period. However, the droughts beginning in 1993 are covered by the data provided for the Aurora station. I do have a gap in my data around 1991-1192 ish, and this might lead into the beginning of the 1993 drought. This would be detrimental in analyzing the affect of the drought during this time period, having little information about water quantity in the region. However, the 50 year range, though missing a few years of data, is sufficient.
+The years of major drought in Ceara, Brazil, found via research, were 1877-1878, 1993-1998, 2012-2018  and 2023. Ceara, Brazil, is a region that is quite prone to drought. The "Great Drought" in 1877-1879 is a bit too early to document, dainly rainfall was not monitored during this time period. However, the droughts beginning in 1993 are covered by the data provided for the Aurora station. I do have a gap in my data around 1991-1992 ish, and this might lead into the beginning of the 1993 drought. This would be detrimental in analyzing the affect of the drought during this time period, having little information about water quantity in the region. However, the 50 year range, though missing a few years of data, is sufficient.
 
 ::: {style="color: green;"}
 ## Understanding the Theoretical Model
@@ -75,7 +75,7 @@ Let's explore the model that simulates the rainwater harvesting system.
 
  There are a few ways we could relax these assumptions in order to make the model more accurate. When calculating the inflow of the tank, we can add a variable of unusable water that is not taken care of after the first flush. This would provide the equation Pt-F-U, U being unusable water. First flush should take care of the sediment in the tank, but this is not entirely guaranteed. In the consumption of water, there should be a more relaxed estimate from where water usage begins and ends. It may be beneficial to propose that the water usage begins prior to the 150 days of the year already accounted for, given room for error of about +- 25 days. Given this area of Brazil has experiences many cycles of drought, it is not dependable to assume that there are always other water sources to depend on, or enough rainfall provided in the dry seasons.
 
- The consumption model is left below for viewing. Below you can also view an adjusted inflow equation, for the volume of water that might be lost due to evaporation. Even though the runoff coefficient accounts for evapoartion, I felt it was necessary to adjust due to the large risk water is under when left sitting in hot/sunny areas for long period of time.
+ The consumption model is left below for viewing. Below you can also view an adjusted inflow equation, for the volume of water that might be lost due to evaporation. Even though the runoff coefficient accounts for evapoartion, I felt it was necessary to adjust with an additional parameter due to the large risk water is under when left sitting in hot/sunny areas for long period of time.
 
 
 
@@ -116,8 +116,7 @@ This makes two major assumptiuons.
 First, the household begins using water from the tank after the 150th day of the year.
 This is based on the idea that the rainy season lasts for about the first 150 days of the year, and so they may have other sources of water before then.
 The second assumption is that each household consumes 74.1 liters per day during the dry season.
-
-How does this compare to your household's water usage?
+My household water usage is much higher than this standard 74.1 liters, but in an area prone to drought, it is reasonable to use less water when there is overall less available.
 
 ::: {style="color: green;"}
 ## Model Implementation and Testing
