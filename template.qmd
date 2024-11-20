@@ -15,7 +15,7 @@ format:
 :::
 Welcome to the Aurora Station Analysis by Bailee Byrd, CEVE 101 F24, taught by Professor James Doss-Gollin.
 
-We begin by loading the required packages.
+We begin the project by loading the required packages.
 
 ```{julia}
 using Revise                      # <1>
@@ -167,9 +167,6 @@ To compare rainfall and tank volume:
 p2 = plot(rainfall_1977)
 plot(p2, p1, layout=(2, 1), size=(1000, 700), link=:x)
 ```
-
-Observe how the tank's water level responds to rainfall events.
-Note any periods when the tank runs dry or overflows.
 
 In 1977, during the second half of the year, there are a great amount of system failures.
 
